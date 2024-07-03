@@ -1,0 +1,67 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model CustomerQueue {
+  createdAt   DateTime                      @default(now())
+  duration    Float?
+  id          String                        @id @default(cuid())
+  queueNumber Int?
+  serviceType EnumCustomerQueueServiceType?
+  status      EnumCustomerQueueStatus?
+  updatedAt   DateTime                      @updatedAt
+}
+
+model ServiceAgent {
+  createdAt   DateTime                     @default(now())
+  id          String                       @id @default(cuid())
+  office      Office?                      @relation(fields: [officeId], references: [id])
+  officeId    String?
+  serviceType EnumServiceAgentServiceType?
+  updatedAt   DateTime                     @updatedAt
+}
+
+model Office {
+  createdAt     DateTime       @default(now())
+  id            String         @id @default(cuid())
+  officeName    String?
+  serviceAgents ServiceAgent[]
+  updatedAt     DateTime       @updatedAt
+  users         User[]
+}
+
+model User {
+  createdAt DateTime      @default(now())
+  email     String?       @unique
+  firstName String?
+  id        String        @id @default(cuid())
+  lastName  String?
+  office    Office?       @relation(fields: [officeId], references: [id])
+  officeId  String?
+  password  String
+  role      EnumUserRole?
+  roles     Json
+  updatedAt DateTime      @updatedAt
+  username  String        @unique
+}
+
+enum EnumCustomerQueueServiceType {
+  Option1
+}
+
+enum EnumCustomerQueueStatus {
+  Option1
+}
+
+enum EnumServiceAgentServiceType {
+  Option1
+}
+
+enum EnumUserRole {
+  Option1
+}
